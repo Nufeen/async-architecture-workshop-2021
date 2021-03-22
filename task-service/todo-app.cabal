@@ -1,0 +1,55 @@
+cabal-version:       >=1.10
+name:                todo-app
+version:             0.1.0.0
+license:             OtherLicense
+license-file:        LICENSE
+author:              Nufeen
+build-type:          Simple
+extra-source-files:  CHANGELOG.md, readme.md
+
+library
+  exposed-modules:   DB
+                   , Types
+		   , Kafka
+  hs-source-dirs:    src
+  build-depends:     base >=4.12.0.0
+                   , hspec
+                   , servant
+                   , servant-server
+                   , hasql
+                   , mtl
+                   , swagger2
+                   , servant-swagger
+                   , aeson
+                   , text
+                   , contravariant-extras
+                   , warp
+                   , lens
+                   , wai-cors
+                   , hw-kafka-client
+                   , bytestring
+  default-language:  Haskell2010
+  -- extra-libraries:   rdkafka
+
+executable todo-app
+  main-is:           src/Main.hs
+  build-depends:     base >=4.12
+                   , hspec
+                   , todo-app
+                   , servant
+                   , servant-server
+                   , servant-swagger
+                   , swagger2
+                   , aeson
+                   , lens
+                   , warp
+                   , hasql
+                   , contravariant-extras
+                   , transformers
+                   , mtl
+                   , text
+                   , wai-cors
+  other-modules:     DB
+                   , Types
+  hs-source-dirs:    src
+  default-language:  Haskell2010

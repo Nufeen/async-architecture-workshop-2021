@@ -1,0 +1,66 @@
+cabal-version:       >=1.10
+name:                auth
+version:             0.1.0.0
+license:             OtherLicense
+license-file:        LICENSE
+author:              Nufeen
+build-type:          Simple
+extra-source-files:  CHANGELOG.md, readme.md
+
+library
+  exposed-modules:   DB
+                   , Types
+  hs-source-dirs:    src
+  build-depends:     base >=4.12.0.0
+                   , hspec
+                   , http-client
+                   , http-conduit
+                   , servant
+                   , servant-server
+                   , servant-client
+                   , hasql
+                   , mtl
+                   , swagger2
+                   , servant-swagger
+                   , aeson
+                   , text
+                   , contravariant-extras
+                   , warp
+                   , lens
+                   , servant-auth
+                   , servant-auth-server
+                   , bytestring
+                   , containers
+                   , password >= 3.0.0.0
+
+  default-language:  Haskell2010
+
+
+executable auth
+  main-is:             src/Main.hs
+  build-depends:       base >=4.12
+                     , bytestring
+                     , containers
+                     , hspec
+                     , auth
+                     , http-client
+                     , http-conduit
+                     , servant
+                     , servant-server
+                     , servant-client
+                     , servant-swagger
+                     , servant-auth
+                     , servant-auth-server
+                     , swagger2
+                     , aeson
+                     , lens
+                     , warp
+                     , hasql
+                     , contravariant-extras
+                     , transformers
+                     , mtl
+                     , text
+                     , password >= 3.0.0.0
+
+  hs-source-dirs:      src
+  default-language:    Haskell2010

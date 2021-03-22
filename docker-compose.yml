@@ -1,0 +1,48 @@
+version: "3.4"
+
+services:
+  todo_app:
+    build:
+      context: ./task-service
+    tty: true
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: workshop_db
+    links:
+      - workshop_db
+    ports:
+      - 8090:8090
+    depends_on:
+      - workshop_db
+    volumes:
+      - .:/opt:cached
+
+  auth_service:
+    build:
+      context: ./auth-service
+    tty: true
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: workshop_db
+    links:
+      - workshop_db
+    ports:
+      - 8080:8080
+    depends_on:
+      - workshop_db
+    volumes:
+      - .:/opt:cached
+
+  workshop_db:
+    image: postgres:12
+    env_file:
+      - .env
+    volumes:
+      - data:/var/lib/postgresql/data:cached
+      - .:/opt:cached
+
+volumes:
+  data:
+    external: false
