@@ -5,7 +5,7 @@
 ### BE
 
 ```
-|- users -> {task service} addTask -> [Event] taskCreated -> {consumer: task service} setTaskPrice
+|- users -> {task service} addTask -> [Event] taskCreated -> {consumer: task service} setTaskPrice (в нашем примере флексим)
 
 
 |- users -> {task service} closeTask -> [Event] tasksClosed -> {consumer: accounting service} charge

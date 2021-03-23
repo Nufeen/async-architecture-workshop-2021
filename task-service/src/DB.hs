@@ -30,7 +30,6 @@ connect session  = do
 
 runSession :: Session b -> Handler b
 runSession session = do
-  _ <- liftIO $ print "DO RUN"
   res <- liftIO $ connect session
   case res of
     Left _ -> throwError err404

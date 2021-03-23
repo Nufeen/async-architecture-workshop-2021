@@ -77,10 +77,10 @@ type SwaggerAPI = "swagger.json" :> Get '[JSON] Swagger
 type API = ToServantApi Routes :<|> ToServantApi Gates :<|> SwaggerAPI
 
 app :: Application
-app = serve api (graphServer :<|> gatewayServer :<|> swaggerServer)
+app = serve api (authServer :<|> gatewayServer :<|> swaggerServer)
   where
     api = Proxy :: Proxy API
-    graphServer = genericServer routes
+    authServer = genericServer routes
     gatewayServer = genericServer gates
     swaggerServer = return swaggerData
     todoApi = genericApi (Proxy :: Proxy Routes)
