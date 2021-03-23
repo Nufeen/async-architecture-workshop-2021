@@ -22,12 +22,14 @@ import Network.Wai.Middleware.Cors
 data Routes route = Routes
   { _tasks :: route :- "tasks" :> Get '[JSON] [Task]
   , _add :: route :- "add" :> ReqBody '[JSON] TaskData :> Post '[JSON] Int64
+  , _close :: route :- "close" :> ReqBody '[JSON] Int64 :> Post '[JSON] Status
   } deriving (Generic)
 
 routes :: Routes AsServer
 routes = Routes
   { _tasks = DB.getTasks
   , _add = DB.addTask
+  , _close = DB.closeTask
   }
 
 type SwaggerAPI = "swagger.json" :> Get '[JSON] Swagger

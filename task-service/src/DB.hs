@@ -65,9 +65,25 @@ addTask (TaskData name description) = do
       (E.param $ E.nonNullable E.text)
     decoder = singleRow $ column $ nonNullable int8
 
--- TODO:
 
--- closeTask
+
+closeTask :: Int64 -> Handler Status
+closeTask (taskid) = do
+  res <- liftIO $ connect $ statement (taskid) s
+  case res of
+    Left _ -> return $ Err "Failed to delete"
+    Right 0 -> return $ Err "Task doesn't exist"
+    Right r -> do
+      liftIO $ Kafka.runProducer "taskClosed" (show taskid)
+      return $ Confirm "Task closed"
+  where
+    s = Statement query encoder decoder noPrepare
+    query = "UPDATE tasks SET opened = 'f' WHERE taskid = 1"
+    encoder = (E.param $ E.nonNullable E.int8)
+    decoder = rowsAffected
+
+
+-- TODO:
 
 -- reassignTasks
 
