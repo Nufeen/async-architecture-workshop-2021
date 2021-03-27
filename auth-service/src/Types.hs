@@ -33,8 +33,8 @@ data AuthData = AuthData {
 } deriving (Show, Generic)
 
 instance ToJSON AuthData where
-  toJSON (AuthData _name _pass) =
-    object ["username" .= _name, "pass" .= _pass]
+  toJSON (AuthData _log _pass) =
+    object ["username" .= _log, "pass" .= _pass]
 
 instance FromJSON AuthData
 instance ToSchema AuthData

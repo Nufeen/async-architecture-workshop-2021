@@ -50,6 +50,7 @@ getTasks = runSession $ statement () s
     encoder = E.noParams
     decoder = rowList taskDecoder
 
+
 addTask :: TaskData -> Handler Int64
 addTask (TaskData name description) = do
   res <- liftIO $ connect $ statement (name, description) s
@@ -64,8 +65,6 @@ addTask (TaskData name description) = do
       (E.param $ E.nonNullable E.text)
       (E.param $ E.nonNullable E.text)
     decoder = singleRow $ column $ nonNullable int8
-
-
 
 closeTask :: Int64 -> Handler Status
 closeTask (taskid) = do
@@ -82,6 +81,34 @@ closeTask (taskid) = do
     encoder = (E.param $ E.nonNullable E.int8)
     decoder = rowsAffected
 
+reassignTask :: Int64 -> Handler Status
+reassignTask taskid = do
+  assignee <- getRandomUserId
+  res <- liftIO $ connect $ statement (taskid, assignee) s
+  case res of
+    Left _ -> return $ Err "Failed to reassign"
+    Right 0 -> return $ Err "Task doesn't exist"
+    Right r ->  do
+      liftIO $ Kafka.runProducer "taskReassigned" (show taskid)
+      return $ Confirm "Success"
+  where
+    s = Statement query encoder decoder noPrepare
+    query = "UPDATE tasks SET assignee = $2 WHERE taskid = $1"
+    encoder = contrazip2
+      (E.param $ E.nonNullable E.int8)
+      (E.param $ E.nonNullable E.int8)
+    decoder = rowsAffected
+
+
+getRandomUserId :: Handler Int64
+getRandomUserId = runSession $ statement () s
+  where
+    s = Statement query encoder decoder noPrepare
+    -- Slow but short request
+    -- For educational code only, dont do this in production!
+    query = "select userid from users ORDER BY random() LIMIT 1;"
+    encoder = E.noParams
+    decoder = singleRow $ column $ nonNullable int8
 
 -- TODO:
 

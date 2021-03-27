@@ -52,6 +52,7 @@ getUsers = runSession $ statement () s
     encoder = E.noParams
     decoder = rowList userDecoder
 
+-- тут должна быть проверка на уникалность имени, для простоты не делаем
 addUser :: AuthData -> Handler Status
 addUser (AuthData name pass) = do
   bcryptedpass <- hashPassword $ mkPassword pass

@@ -23,6 +23,7 @@ data Routes route = Routes
   { _tasks :: route :- "tasks" :> Get '[JSON] [Task]
   , _add :: route :- "add" :> ReqBody '[JSON] TaskData :> Post '[JSON] Int64
   , _close :: route :- "close" :> ReqBody '[JSON] Int64 :> Post '[JSON] Status
+  , _reassignTask :: route :- "reassign" :> ReqBody '[JSON] Int64 :> Post '[JSON] Status
   } deriving (Generic)
 
 routes :: Routes AsServer
@@ -30,6 +31,7 @@ routes = Routes
   { _tasks = DB.getTasks
   , _add = DB.addTask
   , _close = DB.closeTask
+  , _reassignTask = DB.reassignTask
   }
 
 type SwaggerAPI = "swagger.json" :> Get '[JSON] Swagger
