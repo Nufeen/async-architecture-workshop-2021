@@ -6,9 +6,9 @@ module DB where
 import Types
 import Kafka
 
-import Servant --  (Handler, err404)
+import Servant  (Handler, err404)
 import qualified Control.Exception as CE
-import Control.Monad.Except -- (throwError, liftIO, liftM)
+import Control.Monad.Except (throwError, liftIO,)
 import Hasql.Session (Session, statement, run, QueryError)
 import Hasql.Statement (Statement(..))
 import qualified Hasql.Connection as Connection
@@ -16,7 +16,7 @@ import qualified Hasql.Encoders as E
 import Hasql.Decoders
 import Data.Functor.Contravariant ((>$<))
 import Contravariant.Extras.Contrazip (contrazip2)
-import GHC.Int -- (Int64)
+import GHC.Int (Int64)
 
 noPrepare :: Bool
 noPrepare = False
@@ -29,13 +29,6 @@ connect session  = do
   where
     settings = Connection.settings "localhost" 5432 "postgres" "" "workshopdb"
 
-runSession :: Session b -> Handler b
-runSession session = do
-  res <- liftIO $ connect session
-  case res of
-    Left _ -> throwError err404
-    Right r -> return r
-
 taskDecoder :: Row Task
 taskDecoder = Task
   <$> column (nonNullable int8)
@@ -43,8 +36,8 @@ taskDecoder = Task
   <*> column (nonNullable text)
   <*> column (nonNullable bool)
 
-getTasks :: Handler [Task]
-getTasks = runSession $ statement () s
+getTasks :: IO (Either QueryError [Task])
+getTasks = connect $ statement () s
   where
     s = Statement query encoder decoder noPrepare
     query = "SELECT * FROM tasks"
@@ -59,16 +52,9 @@ getOpenedTasksIds = connect $ statement () s
     encoder = E.noParams
     decoder = rowList $ column $ nonNullable int8
 
-addTask :: TaskData -> Handler Int64
-addTask (TaskData name description) = do
-  res <- liftIO $ connect $ statement (name, description) s
-  case res of
-    Left _ -> throwError err404
-    -- в жизни так писать не надо, это надо разносить
-    -- на отдельное апи и отдельный слой контроллеров
-    -- также стоит обогащать событие метаданными
-    -- и контролировать договоренности о схемах событий
-    Right r -> liftIO $ Kafka.runProducer "taskCreated" (show r) >> pure r
+addTask :: TaskData -> IO (Either QueryError Int64)
+addTask (TaskData name description) =
+  connect $ statement (name, description) s
   where
     s = Statement query encoder decoder noPrepare
     query = "insert into tasks (task_name, description, opened) \
@@ -78,43 +64,14 @@ addTask (TaskData name description) = do
       (E.param $ E.nonNullable E.text)
     decoder = singleRow $ column $ nonNullable int8
 
-closeTask :: Int64 -> Handler Status
-closeTask (taskid) = do
-  res <- liftIO $ connect $ statement (taskid) s
-  case res of
-    Left _ -> return $ Err "Failed to delete"
-    Right 0 -> return $ Err "Task doesn't exist"
-    Right r -> do
-      liftIO $ Kafka.runProducer "taskClosed" (show taskid)
-      return $ Confirm "Task closed"
+closeTask :: Int64 -> IO (Either QueryError Int64)
+closeTask taskid =
+   connect $ statement (taskid) s
   where
     s = Statement query encoder decoder noPrepare
     query = "UPDATE tasks SET opened = 'f' WHERE taskid = 1"
     encoder = (E.param $ E.nonNullable E.int8)
     decoder = rowsAffected
-
-reassignTasks :: Handler Status
-reassignTasks = do
-  ids <- liftIO getOpenedTasksIds
-  case ids of
-    Left _ -> return $ Err ""
-    Right tasks -> do
-      _ <- (mapM_ reassign tasks)
-      return $ Confirm "Reassign Success"
-
-reassign :: MonadIO m => Int64 -> m Status
-reassign task = do
-  assignee <- liftIO getRandomUserId
-  case assignee of
-    Left _ -> return $ Err "DB connect error or no user exist"
-    Right a -> do
-      res <- liftIO $ updateAssignee task a
-      case res of
-        Left _ -> return $ Err "Failed to reassign"
-        Right 0 -> return $ Err "Task doesn't exist"
-        Right r ->  do
-          liftIO $ Kafka.runProducer "taskReassigned" (show task)
-          return $ Confirm "Success"
 
 updateAssignee :: Int64 -> Int64 -> IO (Either QueryError Int64)
 updateAssignee taskid assignee =

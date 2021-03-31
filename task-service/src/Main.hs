@@ -6,7 +6,7 @@
 module Main where
 
 import Types
-import qualified DB as DB
+import qualified Handlers as Handlers
 
 import Servant
 import Servant.API.Generic (genericApi, ToServantApi, (:-))
@@ -23,17 +23,15 @@ data Routes route = Routes
   { _tasks :: route :- "tasks" :> Get '[JSON] [Task]
   , _add :: route :- "add" :> ReqBody '[JSON] TaskData :> Post '[JSON] Int64
   , _close :: route :- "close" :> ReqBody '[JSON] Int64 :> Post '[JSON] Status
-  , _reassignSingleTask :: route :- "reassign-one" :> ReqBody '[JSON] Int64 :> Post '[JSON] Status
   , _reassign :: route :- "reassign" :> Get '[JSON] Status
   } deriving (Generic)
 
 routes :: Routes AsServer
 routes = Routes
-  { _tasks = DB.getTasks
-  , _add = DB.addTask
-  , _close = DB.closeTask
-  , _reassignSingleTask = DB.reassign -- test route, unused
-  , _reassign = DB.reassignTasks -- test route, unused
+  { _tasks = Handlers.getTasks
+  , _add = Handlers.addTask
+  , _close = Handlers.closeTask
+  , _reassign = Handlers.reassignAll
   }
 
 type SwaggerAPI = "swagger.json" :> Get '[JSON] Swagger

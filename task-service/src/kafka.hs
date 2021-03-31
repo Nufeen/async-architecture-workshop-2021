@@ -20,7 +20,7 @@ producerProps = brokersList [BrokerAddress "localhost:29092"]
              <> setCallback (deliveryCallback print)
              <> logLevel KafkaLogDebug
 
--- Topic to send messages to
+-- Порты и имена топиков надо зашивать в .env, тут упрощение
 targetTopic :: TopicName
 targetTopic = TopicName "tasks"
 

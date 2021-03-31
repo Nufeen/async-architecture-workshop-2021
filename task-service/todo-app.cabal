@@ -10,7 +10,8 @@ extra-source-files:  CHANGELOG.md, readme.md
 library
   exposed-modules:   DB
                    , Types
-		   , Kafka
+		               , Kafka
+                   , Handlers
   hs-source-dirs:    src
   build-depends:     base >=4.12.0.0
                    , hspec
