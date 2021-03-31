@@ -113,10 +113,10 @@ ALTER TABLE ONLY public.users ALTER COLUMN userid SET DEFAULT nextval('public.us
 --
 
 COPY public.tasks (taskid, task_name, description, opened, assignee) FROM stdin;
-1	Task 1	Long description	t	\N
-2	Task 2	Long description 2	t	\N
-3	test4	12345	t	\N
-4	task 4	new one	t	\N
+1	Task 1	Long description	f	\N
+4	task 4	new one	t	20
+2	Task 2	Long description 2	t	19
+3	test4	12345	t	19
 \.
 
 
@@ -126,6 +126,8 @@ COPY public.tasks (taskid, task_name, description, opened, assignee) FROM stdin;
 
 COPY public.users (userid, name, is_moderator, is_admin, pass) FROM stdin;
 19	test1	\N	\N	$2b$10$RTu3HUqsvzt08xrsGOOccu/9zdTV6sPdt5tbHpfPry9Uh9sRSsPa2
+20	test2	\N	\N	$2b$10$E8wKBMNfxe2NFd7Iv/E6UOrfR0B4b6rFJ9oyGfpLtQJpbB67ltZeG
+21	test3	\N	\N	$2b$10$EPxXJ5GKRmuaojZJTCEC2egSG0CBF3Y0ZlAcfkwZnFj3lFQQqilB6
 \.
 
 
@@ -140,7 +142,7 @@ SELECT pg_catalog.setval('public.tasks_taskid_seq', 4, true);
 -- Name: users_userid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_userid_seq', 19, true);
+SELECT pg_catalog.setval('public.users_userid_seq', 21, true);
 
 
 --
