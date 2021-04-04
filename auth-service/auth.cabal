@@ -32,35 +32,35 @@ library
                    , bytestring
                    , containers
                    , password >= 3.0.0.0
-
+                   , hw-kafka-client
   default-language:  Haskell2010
 
 
 executable auth
-  main-is:             src/Main.hs
-  build-depends:       base >=4.12
-                     , bytestring
-                     , containers
-                     , hspec
-                     , auth
-                     , http-client
-                     , http-conduit
-                     , servant
-                     , servant-server
-                     , servant-client
-                     , servant-swagger
-                     , servant-auth
-                     , servant-auth-server
-                     , swagger2
-                     , aeson
-                     , lens
-                     , warp
-                     , hasql
-                     , contravariant-extras
-                     , transformers
-                     , mtl
-                     , text
-                     , password >= 3.0.0.0
-
-  hs-source-dirs:      src
-  default-language:    Haskell2010
+  main-is:           src/Main.hs
+  build-depends:     base >=4.12
+                   , bytestring
+                   , containers
+                   , hspec
+                   , auth
+                   , http-client
+                   , http-conduit
+                   , servant
+                   , servant-server
+                   , servant-client
+                   , servant-swagger
+                   , servant-auth
+                   , servant-auth-server
+                   , swagger2
+                   , aeson
+                   , lens
+                   , warp
+                   , hasql
+                   , contravariant-extras
+                   , transformers
+                   , mtl
+                   , text
+                   , password >= 3.0.0.0
+                   , hw-kafka-client
+  hs-source-dirs:    src
+  default-language:  Haskell2010

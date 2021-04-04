@@ -39,6 +39,9 @@ import Data.Text.Encoding
 import           Network.HTTP.Simple hiding (Proxy)
 import qualified Data.ByteString.Lazy.Char8 as L8
 
+import Control.Exception (bracket)
+import Kafka.Consumer
+
 
 data AuthenticatedUser = AUser { auID :: Int
                                , auOrgID :: Int

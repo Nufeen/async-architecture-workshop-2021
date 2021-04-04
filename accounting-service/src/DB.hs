@@ -41,3 +41,18 @@ taskDecoder = Task
   <*> column (nonNullable text)
   <*> column (nonNullable text)
   <*> column (nonNullable bool)
+
+-- TODO Endpoints
+
+-- GET:
+
+-- - getTransactions
+-- - getUserInvoice
+-- - getDailyManagementIncome
+-- - getGoldenTask
+
+-- POST:
+
+-- - writeOff
+-- - charge
+-- - clearBalanceSheet

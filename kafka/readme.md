@@ -11,3 +11,19 @@ docker-compose exec broker bash
 
 kafka-topics --create --topic tasks --bootstrap-server broker:9092 --replication-factor 1 --partitions 1
 ```
+
+либо:
+
+```
+nix-shell -p kafkacat
+
+kafkacat -b localhost:9092 -t new_topic -P
+```
+
+Проверить что всё консьюмится:
+
+```
+nix-shell -p kafkacat
+
+kafkacat -b localhost:29092 -t tasks -K:
+```
